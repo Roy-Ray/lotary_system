@@ -1,5 +1,4 @@
 const API = window.location.origin;
-//const API = "http://localhost:5000"; 
 let currentRotation = 0;
 let isSpinning = false; 
 
