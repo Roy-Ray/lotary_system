@@ -93,32 +93,16 @@ body {
   align-items: center;
 }
 
-/* 🔴 FIXED WINNER TEXT FOR MOBILE STACKING */
 .winner-text {
   font-size: 1.8rem;
   font-weight: 800;
-  min-height: 75px; 
+  min-height: 45px;
   color: #fff;
   margin-bottom: 30px;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 0 15px #ff00cc, 0 0 30px #ff00cc;
   transition: all 0.3s ease;
-  line-height: 1.4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 100%;
-  padding: 0 10px;
-}
-
-.winner-text strong {
-  display: block; 
-  margin-top: 5px;
-  font-size: 1.25em; 
-  word-break: break-word; 
 }
 
 .wheel-container {
@@ -128,7 +112,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto 20px auto; /* Forces center alignment */
+  margin-bottom: 20px;
 }
 
 .wheel-rim {
@@ -173,16 +157,16 @@ body {
   z-index: 5;
 }
 
-/* --- Wheel Slice Borders --- */
+/* --- NEW: Wheel Slice Borders --- */
 .slice-border {
   position: absolute;
   top: 0;
-  left: calc(50% - 2px); 
-  width: 4px; 
-  height: 50%; 
-  background-color: #1a0b2e; 
+  left: calc(50% - 2px); /* Mathematically perfect center for a 4px line */
+  width: 4px; /* Thickness of the black border */
+  height: 50%; /* Reaches from the center to the edge */
+  background-color: #1a0b2e; /* Deep dark background color for the border */
   transform-origin: bottom center;
-  z-index: 4; 
+  z-index: 4; /* Sits behind the text, but above the colors */
 }
 
 .wheel.spinning {
@@ -277,6 +261,13 @@ body {
   background: rgba(0, 255, 204, 0.1);
 }
 
+.card .rank {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffcc00;
+  min-width: 35px;
+}
+
 .card img {
   width: 70px;  
   height: 70px;
@@ -331,20 +322,15 @@ body {
   height: 100%;
   background: rgba(0,0,0,0.8);
   top: 0; left: 0;
-  z-index: 3000; 
+  z-index: 3000; /* FIXED Z-INDEX FOR MOBILE OVERLAP */
   backdrop-filter: blur(5px);
 }
 
 .modal-content {
   width: 90%;
   max-width: 400px;
-  /* 🔴 BULLETPROOF CENTERING FIX FOR MODAL */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: 15vh auto;
   text-align: center;
-  box-sizing: border-box; 
 }
 
 .modal-content h3 { margin-bottom: 10px; color: #00ffcc; }
@@ -497,7 +483,7 @@ button {
 .user-popup p { color: #ccc; margin-bottom: 15px; font-size: 1.1rem; }
 .popup-score { font-size: 1.4rem; color: #ffcc00; font-weight: bold; }
 
-/* 🔴 PERFECT PARALLEL ALIGNMENT (DESKTOP) */
+/* --- Asha Bhosle Ji Container --- */
 .asha-container {
   position: absolute;
   top: 30px;
@@ -505,13 +491,6 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 1000;
-}
-
-.live-viewer-container {
-  position: absolute;
-  top: 30px;
-  right: 30px;
   z-index: 1000;
 }
 
@@ -545,6 +524,14 @@ button {
   color: #ffcc00; 
   text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
   letter-spacing: 1px;
+}
+
+/* --- Live Viewer Container (Top Right) --- */
+.live-viewer-container {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  z-index: 1000;
 }
 
 /* --- Glowing Live Viewer Pill --- */
@@ -594,68 +581,7 @@ button {
 @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 /* ==================================================================== */
-/* 🏆 WINNER REVEAL POPUP STYLES                                        */
-/* ==================================================================== */
-.winner-modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  z-index: 9999; 
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.winner-content {
-  text-align: center;
-  animation: popIn 0.8s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-  padding: 50px;
-  width: 90%;
-  max-width: 600px;
-  background: rgba(26, 11, 46, 0.95);
-  border: 3px solid #00ffcc;
-  box-shadow: 0 0 50px rgba(0, 255, 204, 0.6), inset 0 0 30px rgba(0, 255, 204, 0.2);
-  border-radius: 30px;
-}
-
-.congrats-text {
-  font-size: 2.8rem;
-  font-weight: 800;
-  color: #ffcc00;
-  margin-bottom: 25px;
-  text-shadow: 0 0 20px #ffcc00;
-  animation: pulse-rim 1.5s infinite alternate;
-}
-
-#winner-img {
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  border: 8px solid #ff00cc;
-  box-shadow: 0 0 40px #ff00cc;
-  object-fit: cover;
-  margin-bottom: 25px;
-  animation: float 4s infinite alternate ease-in-out;
-}
-
-#winner-name-display {
-  font-size: 3rem;
-  font-weight: 800;
-  color: #00ffcc;
-  margin-bottom: 10px;
-  text-shadow: 0 0 15px #00ffcc;
-  text-transform: uppercase;
-}
-
-#winner-district-display {
-  font-size: 1.5rem;
-  color: #fff;
-  letter-spacing: 2px;
-}
-
-/* ==================================================================== */
-/* 🔴 MOBILE RESPONSIVENESS FIXES                                       */
+/* MOBILE RESPONSIVENESS FIXES                     */
 /* ==================================================================== */
 
 /* Standard Tablets & Larger Phones */
@@ -664,56 +590,37 @@ button {
     grid-template-columns: 1fr;
   }
   
-  /* 🔴 KEEP ASHA JI AND VISITOR COUNT PARALLEL ON MOBILE */
   .asha-container {
-    position: absolute; 
-    top: 15px;
-    left: 15px;
-    margin: 0; 
-    transform: scale(0.65);
-    transform-origin: top left;
-  }
-
-  .live-viewer-container {
-    position: absolute;
-    top: 25px;
-    right: 15px;
-    margin: 0;
-    transform: scale(0.8);
-    transform-origin: top right;
+    position: relative; 
+    top: 0;
+    left: 0;
+    margin: 20px auto 10px auto; 
   }
   
-  /* Prevent header from overlapping the top icons */
-  .header {
-    margin-top: 80px; 
+  .asha-canvas {
+    width: 100px; 
+    height: 100px;
+  }
+
+  /* Centers the live counter under Asha Ji on mobile screens */
+  .live-viewer-container {
+    position: relative;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
   }
 }
 
-/* Mobile Phones (Standard size) - Wheel Resizing & Centering Fixes */
+/* Mobile Phones (Standard size) */
 @media (max-width: 600px) {
   .container { padding: 15px 10px; }
-  .glass-panel { padding: 20px 10px; }
+  .glass-panel { padding: 20px 15px; }
 
   .header h1 { font-size: 2.2rem; }
   .timer { font-size: 1.2rem; padding: 8px 15px; }
-  
-  /* Forces text to center perfectly */
-  .winner-text { 
-    font-size: 1.3rem; 
-    margin-bottom: 20px; 
-    text-align: center;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  /* Locks the wheel in the center */
-  .wheel-container { 
-    width: 300px; 
-    height: 300px; 
-    margin: 0 auto 20px auto; 
-  } 
+  .winner-text { font-size: 1.4rem; margin-bottom: 20px; }
 
   .card { padding: 10px 15px; }
   .card img { width: 50px; height: 50px; margin-right: 15px; }
@@ -723,44 +630,21 @@ button {
   .wheel-text { font-size: 0.85rem; }
 }
 
-/* 🔥 Live Counter Enhancements */
-.live-viewer-pill {
-  animation: livePulse 2s infinite alternate;
-}
 
-@keyframes livePulse {
-  0% { box-shadow: 0 0 10px rgba(0,255,204,0.3); }
-  100% { box-shadow: 0 0 25px rgba(0,255,204,0.8); }
-}
 
-/* 🔴 Faster & stronger blinking dot */
-.live-dot {
-  animation: blink 1s infinite;
-}
-
-/* 🔢 Smooth number animation */
-#view-count {
-  transition: all 0.3s ease;
-}
 
 
 /* Small Mobile Phones (iPhone SE, older devices) */
+
 @media (max-width: 400px) {
-  .wheel-container { width: 260px; height: 260px; margin: 0 auto 20px auto; }
+  .wheel-container { width: 260px; height: 260px; }
   .center-spin-btn { width: 65px; height: 65px; font-size: 1.6rem; }
-  
-  .pointer { width: 35px; height: 50px; top: -15px; } 
+  .pointer { width: 30px; height: 40px; top: -15px; }
   
   .header h1 { font-size: 1.8rem; }
-  .winner-text { font-size: 1.1rem; }
   
   .eligible-badge { padding: 8px 15px; }
   .eligible-badge img { width: 30px; height: 30px; margin-right: 10px; }
   
-  .wheel-text { font-size: 0.65rem; } 
-  
-  /* Extra scaling for tiny phones */
-  .asha-container { transform: scale(0.55); top: 10px; left: 10px; }
-  .live-viewer-container { transform: scale(0.7); top: 15px; right: 10px; }
-  .header { margin-top: 60px; }
+  .wheel-text { font-size: 0.7rem; }
 }
