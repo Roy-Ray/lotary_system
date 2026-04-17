@@ -159,7 +159,7 @@ function runCountdown(eventTime) {
   }, 1000);
 }
 
-/* 4. SPIN LOGIC WITH CONFETTI & APPLAUSE EFFECTS */
+/* 4. SPIN LOGIC WITH CONFETTI & SOUND EFFECTS */
 async function spin() {
   const code = document.getElementById("code").value;
 
@@ -210,13 +210,12 @@ async function spin() {
 
     // TRIGGER WINNER REVEAL AFTER 5 SECONDS
     setTimeout(() => {
-      // 1. Play Applause Audio
+      // 1. Play Correct/Winning Audio
       const applauseSound = document.getElementById("applause-sound");
       if (applauseSound) {
         applauseSound.currentTime = 0;
         applauseSound.play().catch(e => console.log(e));
         
-        // Stop audio exactly after 4 seconds
         setTimeout(() => {
             applauseSound.pause();
             applauseSound.currentTime = 0;
@@ -230,7 +229,7 @@ async function spin() {
       document.getElementById("winner-district-display").innerText = `📍 ${data.district}`;
       winnerModal.style.display = "flex";
 
-      // 3. Fire Confetti continuously for 4 seconds
+      // 3. Fire Confetti continuously for 4 seconds (🔴 FIXED Z-INDEX)
       const duration = 4000;
       const end = Date.now() + duration;
 
@@ -240,14 +239,16 @@ async function spin() {
           angle: 60,
           spread: 55,
           origin: { x: 0 },
-          colors: ['#ff00cc', '#00ffcc', '#ffcc00', '#ffffff']
+          colors: ['#ff00cc', '#00ffcc', '#ffcc00', '#ffffff'],
+          zIndex: 10000 // Places confetti IN FRONT of the popup
         });
         confetti({
           particleCount: 7,
           angle: 120,
           spread: 55,
           origin: { x: 1 },
-          colors: ['#ff00cc', '#00ffcc', '#ffcc00', '#ffffff']
+          colors: ['#ff00cc', '#00ffcc', '#ffcc00', '#ffffff'],
+          zIndex: 10000 // Places confetti IN FRONT of the popup
         });
 
         if (Date.now() < end) {
