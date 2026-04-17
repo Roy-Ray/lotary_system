@@ -633,7 +633,66 @@ button {
 
 
 
+/* ==================================================================== */
+/* 🏆 NEW WINNER REVEAL POPUP STYLES                                    */
+/* ==================================================================== */
+.winner-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999; /* Stays above everything, including confetti */
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 
+.winner-content {
+  text-align: center;
+  animation: popIn 0.8s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+  padding: 50px;
+  width: 90%;
+  max-width: 600px;
+  background: rgba(26, 11, 46, 0.95);
+  border: 3px solid #00ffcc;
+  box-shadow: 0 0 50px rgba(0, 255, 204, 0.6), inset 0 0 30px rgba(0, 255, 204, 0.2);
+  border-radius: 30px;
+}
+
+.congrats-text {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #ffcc00;
+  margin-bottom: 25px;
+  text-shadow: 0 0 20px #ffcc00;
+  animation: pulse-rim 1.5s infinite alternate;
+}
+
+#winner-img {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 8px solid #ff00cc;
+  box-shadow: 0 0 40px #ff00cc;
+  object-fit: cover;
+  margin-bottom: 25px;
+  animation: float 4s infinite alternate ease-in-out;
+}
+
+#winner-name-display {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #00ffcc;
+  margin-bottom: 10px;
+  text-shadow: 0 0 15px #00ffcc;
+  text-transform: uppercase;
+}
+
+#winner-district-display {
+  font-size: 1.5rem;
+  color: #fff;
+  letter-spacing: 2px;
+}
 /* Small Mobile Phones (iPhone SE, older devices) */
 
 @media (max-width: 400px) {
