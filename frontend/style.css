@@ -128,7 +128,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto 20px auto; /* Forces center alignment */
+  margin: 0 auto 20px auto; 
 }
 
 .wheel-rim {
@@ -159,7 +159,6 @@ body {
   transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); 
 }
 
-/* Styles for the names inside the wheel slices */
 .wheel-text {
   position: absolute;
   left: 50%;
@@ -173,7 +172,6 @@ body {
   z-index: 5;
 }
 
-/* --- Wheel Slice Borders --- */
 .slice-border {
   position: absolute;
   top: 0;
@@ -338,7 +336,6 @@ body {
 .modal-content {
   width: 90%;
   max-width: 400px;
-  /* 🔴 BULLETPROOF CENTERING FIX FOR MODAL */
   position: absolute;
   top: 50%;
   left: 50%;
@@ -508,6 +505,7 @@ button {
   z-index: 1000;
 }
 
+/* 🔴 LIVE COUNTER EXACTLY ON THE RIGHT */
 .live-viewer-container {
   position: absolute;
   top: 30px;
@@ -561,6 +559,7 @@ button {
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.3); 
   backdrop-filter: blur(5px);
   transition: transform 0.3s ease;
+  animation: livePulse 2s infinite alternate;
 }
 
 .live-viewer-pill:hover {
@@ -575,7 +574,7 @@ button {
   border-radius: 50%;
   margin-right: 8px;
   box-shadow: 0 0 10px #ff0055;
-  animation: blink 1.5s infinite;
+  animation: blink 1s infinite;
 }
 
 #view-count {
@@ -583,11 +582,17 @@ button {
   color: #fff; 
   font-weight: 800;
   font-size: 1.1rem;
+  transition: all 0.3s ease;
 }
 
 @keyframes blink {
   0%, 100% { opacity: 1; box-shadow: 0 0 15px #ff0055; }
   50% { opacity: 0.4; box-shadow: 0 0 5px #ff0055; }
+}
+
+@keyframes livePulse {
+  0% { box-shadow: 0 0 10px rgba(0,255,204,0.3); }
+  100% { box-shadow: 0 0 25px rgba(0,255,204,0.8); }
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -722,27 +727,6 @@ button {
   
   .wheel-text { font-size: 0.85rem; }
 }
-
-/* 🔥 Live Counter Enhancements */
-.live-viewer-pill {
-  animation: livePulse 2s infinite alternate;
-}
-
-@keyframes livePulse {
-  0% { box-shadow: 0 0 10px rgba(0,255,204,0.3); }
-  100% { box-shadow: 0 0 25px rgba(0,255,204,0.8); }
-}
-
-/* 🔴 Faster & stronger blinking dot */
-.live-dot {
-  animation: blink 1s infinite;
-}
-
-/* 🔢 Smooth number animation */
-#view-count {
-  transition: all 0.3s ease;
-}
-
 
 /* Small Mobile Phones (iPhone SE, older devices) */
 @media (max-width: 400px) {
