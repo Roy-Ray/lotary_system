@@ -6,84 +6,106 @@ let isSpinning = false;
 async function loadTop10() {
   try {
     const res = await fetch(API + "/top10");
-    
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     
     let data = await res.json();
 
-    // Handle empty response
     if (!data || data.length === 0) {
-      document.getElementById("top10").innerHTML = "<p class='loading-text'>No participants found. Please add data to the database.</p>";
-      document.getElementById("eligible-list").innerHTML = "<p class='loading-text'>No eligible participants yet.</p>";
+      document.getElementById("top10").innerHTML = "<p class='loading-text'>No participants found.</p>";
       return;
     }
 
-    // SORT THE DATA: Highest score to lowest score
     data.sort((a, b) => b.score - a.score);
 
     // Populate Top 10 List
     document.getElementById("top10").innerHTML = data.map((p, index) => `
       <div class="card">
         <div class="rank">#${index + 1}</div>
-        <img src="${p.image_url || 'https://via.placeholder.com/45?text=' + p.name.charAt(0)}" alt="${p.name}" title="Click to enlarge" onerror="this.src='https://via.placeholder.com/45?text=?' " onclick="showLargeImage('${p.image_url || 'https://via.placeholder.com/45?text=' + p.name.charAt(0)}')" />
+        <img src="${p.image_url || 'https://via.placeholder.com/45?text=' + p.name.charAt(0)}" onclick="showLargeImage('${p.image_url}')" />
         <div class="info">
-          <h4 title="Click for details" onclick="showUserInfo('${p.name}', '${p.district}', ${p.score})">${p.name}</h4>
+          <h4 onclick="showUserInfo('${p.name}', '${p.district}', ${p.score})">${p.name}</h4>
           <p>${p.district}</p>
         </div>
         <div class="score">⭐ ${p.score}</div>
       </div>
     `).join("");
 
-    // Filter & Populate Eligible VIPs (Score == 100)
+    // Filter Eligible VIPs
     const eligiblePerformers = data.filter(p => p.score === 100);
+    window.currentEligible = eligiblePerformers; // Save globally for spin physics
+
     if (eligiblePerformers.length > 0) {
       const badgesHTML = eligiblePerformers.map(p => `
         <div class="eligible-badge">
-          <img src="${p.image_url || 'https://via.placeholder.com/60?text=' + p.name.charAt(0)}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/60?text=?'" />
-          <div class="badge-info">
-            <h4>${p.name}</h4>
-            <p>${p.district}</p>
-          </div>
+          <img src="${p.image_url || 'https://via.placeholder.com/60?text=' + p.name.charAt(0)}" />
+          <div class="badge-info"><h4>${p.name}</h4><p>${p.district}</p></div>
         </div>
       `).join("");
-      // Duplicate for seamless circular marquee
       document.getElementById("eligible-list").innerHTML = badgesHTML + badgesHTML;
+      
+      renderWheel(eligiblePerformers); // Generate the wheel with names
     } else {
       document.getElementById("eligible-list").innerHTML = "<p class='loading-text'>No perfect scorers yet!</p>";
+      renderWheel([]); 
     }
   } catch (error) {
-    console.error("❌ Error loading top performers:", error);
-    document.getElementById("top10").innerHTML = "<p class='loading-text'>⚠️ Failed to load data. Make sure the server is running on http://localhost:5000</p>";
-    document.getElementById("eligible-list").innerHTML = "<p class='loading-text'>⚠️ Connection error</p>";
+    console.error("❌ Error:", error);
   }
 }
 
-/* 2. LIVE TIMER FUNCTION (FETCHED FROM DB) */
+/* 2. DYNAMIC WHEEL GENERATOR */
+function renderWheel(candidates) {
+  const wheel = document.getElementById("wheel");
+  wheel.innerHTML = ""; // Clear existing slices
+
+  if (!candidates || candidates.length === 0) {
+    wheel.style.background = "conic-gradient(from 0deg, #FF0055 0deg 360deg)";
+    return;
+  }
+
+  const colors = ['#FF0055', '#7000FF', '#00E5FF', '#FFCC00', '#00FFCC', '#FF00CC'];
+  const sliceAngle = 360 / candidates.length;
+  let gradientString = 'conic-gradient(from 0deg, ';
+
+  candidates.forEach((c, i) => {
+    // 1. Build Gradient color block
+    const color = colors[i % colors.length];
+    const startAngle = i * sliceAngle;
+    const endAngle = (i + 1) * sliceAngle;
+    gradientString += `${color} ${startAngle}deg ${endAngle}deg${i < candidates.length - 1 ? ', ' : ''}`;
+
+    // 2. Add Name Label
+    const textEl = document.createElement("div");
+    textEl.className = "wheel-text";
+    textEl.innerText = c.name.split(' ')[0]; // Only use first name to fit slice
+
+    // 3. Position text exactly in the middle of the slice
+    const textAngle = startAngle + (sliceAngle / 2) - 90;
+    textEl.style.transform = `translateY(-50%) rotate(${textAngle}deg) translateX(55px)`;
+
+    wheel.appendChild(textEl);
+  });
+
+  gradientString += ')';
+  wheel.style.background = gradientString;
+}
+
+/* 3. LIVE TIMER FUNCTION (FETCHED FROM DB) */
 async function loadTimer() {
   try {
     const res = await fetch(API + "/event");
-    
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     
     const data = await res.json();
-
-    if (!data || !data.event_name) {
-      throw new Error("Invalid event data");
-    }
+    if (!data || !data.event_name) throw new Error("Invalid event data");
 
     document.getElementById("event-name").innerText = data.event_name;
     document.getElementById("organizer-name").innerText = data.organizer_name;
 
-    // Use the event_time from MySQL event table
     const eventTime = new Date(data.event_time).getTime();
     runCountdown(eventTime);
   } catch (error) {
     console.error("❌ Error loading event time:", error);
-    // Fallback static time if DB is unreachable
     document.getElementById("event-name").innerText = "আশার আলো, ছকে খেলো";
     document.getElementById("organizer-name").innerText = "Dipon Bandyapadyay & Team™";
     runCountdown(new Date("2026-04-17T11:23:00").getTime());
@@ -113,14 +135,9 @@ function runCountdown(eventTime) {
   }, 1000);
 }
 
-/* 3. SPIN LOGIC (AUTHENTICATED VIA DB) */
+/* 4. SPIN LOGIC WITH ACCURATE LANDING PHYSICS */
 async function spin() {
   const code = document.getElementById("code").value;
-
-  if (!code) {
-    alert("❌ Please enter an access code");
-    return;
-  }
 
   if (code !== "1234") {
     alert("❌ Wrong Access Code");
@@ -136,33 +153,41 @@ async function spin() {
   winnerText.innerText = "Spinning...";
   winnerText.style.color = "white";
 
-  isSpinning = true;
-  wheel.classList.add("spinning");
-
-  // Play "Zoooooo" Sound
+  // Play Sound immediately
   spinSound.currentTime = 0;
-  spinSound.play().catch(err => console.log("Audio blocked or unavailable:", err));
-
-  // Trigger Fast Spin Animation
-  const randomExtraDegrees = Math.floor(Math.random() * 360);
-  currentRotation += 1800 + randomExtraDegrees; 
-  wheel.style.transform = `rotate(${currentRotation}deg)`;
+  spinSound.play().catch(err => console.log(err));
 
   try {
+    // 1. Ask backend for the winner FIRST
     const res = await fetch(API + "/spin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code })
     });
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.error || `HTTP error! status: ${res.status}`);
-    }
-
+    if (!res.ok) throw new Error("Server error");
     const data = await res.json();
 
-    // Wait for the 5s animation to finish before showing winner
+    // 2. Start Animation
+    isSpinning = true;
+    wheel.classList.add("spinning");
+
+    // 3. Calculate exact stopping angle to land on the winner's name
+    let finalAngle = Math.floor(Math.random() * 360);
+    const winnerIndex = window.currentEligible ? window.currentEligible.findIndex(p => p.name === data.name) : -1;
+
+    if (winnerIndex !== -1) {
+        const sliceAngle = 360 / window.currentEligible.length;
+        const middleAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
+        finalAngle = 360 - middleAngle; // Math to align slice center to the top pointer
+    }
+
+    // 4. Add 5 full spins and apply
+    const currentMod = currentRotation % 360;
+    currentRotation = currentRotation + (360 - currentMod) + 1800 + finalAngle; 
+    wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+    // 5. Wait for CSS transition (5s) to finish before showing winner text
     setTimeout(() => {
       winnerText.innerHTML = `🎉 Winner: <strong>${data.name}</strong><br><small>${data.district}</small>`;
       winnerText.style.color = "#00ffcc";
@@ -175,14 +200,13 @@ async function spin() {
 
   } catch (error) {
     console.error("❌ Spin error:", error);
-    winnerText.innerText = `❌ Error: ${error.message}`;
-    winnerText.style.color = "#ff6b6b";
+    winnerText.innerText = "❌ Error Occurred";
     isSpinning = false;
     wheel.classList.remove("spinning");
   }
 }
 
-/* 4. UI INTERACTIVE LOGIC (Popups) */
+/* 5. UI INTERACTIVE LOGIC (Popups) */
 function openPopup() {
   document.getElementById("code").value = ""; 
   document.getElementById("popup").style.display = "block";
@@ -210,7 +234,7 @@ function showUserInfo(name, district, score) {
   userPopupTimer = setTimeout(() => { popup.classList.remove("show"); }, 2500);
 }
 
-/* 5. CONTINUOUS WIND EFFECT */
+/* 6. CONTINUOUS WIND EFFECT */
 function idleSpin() {
   if (!isSpinning) {
     currentRotation += 0.2; 
@@ -218,15 +242,12 @@ function idleSpin() {
   }
   requestAnimationFrame(idleSpin);
 }
-/*/* 6. LIVE VISITOR TRACKING & ANIMATION */
+
+/* 7. LIVE VISITOR TRACKING & ANIMATION */
 async function startVisitorCounter() {
-  // Hit the /visit route IMMEDIATELY on every page load/refresh
   const initialUrl = API + "/visit"; 
-  
-  // Fetch initial count and animate
   await fetchAndAnimate(initialUrl);
 
-  // Poll every 5 seconds to catch new traffic from other people in real-time
   setInterval(() => {
     fetchAndAnimate(API + "/visitors");
   }, 5000);
@@ -242,7 +263,6 @@ async function fetchAndAnimate(fetchUrl) {
     const currentCount = parseInt(counterEl.innerText) || 0;
     const newCount = data.views;
 
-    // Fast count-up animation if the number goes up
     if (newCount > currentCount) {
       let start = currentCount === 0 ? newCount - 5 : currentCount; 
       const stepTime = 50; 
@@ -261,8 +281,9 @@ async function fetchAndAnimate(fetchUrl) {
     console.log("Live counter updating...");
   }
 }
+
 /* INITIALIZE */
 loadTop10();
 loadTimer();
-startVisitorCounter(); // <-- ADD THIS LINE HERE
+startVisitorCounter();
 requestAnimationFrame(idleSpin);
