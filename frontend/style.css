@@ -157,6 +157,18 @@ body {
   z-index: 5;
 }
 
+/* --- NEW: Wheel Slice Borders --- */
+.slice-border {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px; /* Thickness of the black border */
+  height: 50%; /* Reaches from the center to the edge */
+  background-color: #1a0b2e; /* Deep dark background color for the border */
+  transform-origin: bottom center;
+  z-index: 4; /* Sits behind the text, but above the colors */
+}
+
 .wheel::after {
   content: '';
   position: absolute;

@@ -89,6 +89,12 @@ function renderWheel(candidates) {
     textEl.style.transform = `translateY(-50%) rotate(${textAngle}deg) translateX(55px)`;
 
     wheel.appendChild(textEl);
+
+    // 4. ADD BLACK BORDER LINE (NEW)
+    const lineEl = document.createElement("div");
+    lineEl.className = "slice-border";
+    lineEl.style.transform = `translateX(-50%) rotate(${endAngle}deg)`;
+    wheel.appendChild(lineEl);
   });
 
   gradientString += ')';
