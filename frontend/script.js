@@ -1,6 +1,7 @@
 const API = window.location.origin;
 let currentRotation = 0;
 let isSpinning = false; 
+let shuffleTimer; // Tracks the animated shuffle loop
 
 /* 1. LOAD LEADERBOARD & ELIGIBLE PERFORMERS FROM DATABASE */
 async function loadTop10() {
@@ -15,24 +16,17 @@ async function loadTop10() {
       return;
     }
 
-    // Sort descending by score
-    data.sort((a, b) => b.score - a.score);
+    // 🔴 Change Title Dynamically
+    document.querySelector(".leaderboard-section h2").innerText = "🏆 Top Scorers (90 - 100)";
 
-    // Slice the Top 10 specifically for the Leaderboard UI
-    const top10Data = data.slice(0, 10);
+    // 🔴 Filter ONLY participants who scored between 90 and 100
+    const topScorers = data.filter(p => p.score >= 90 && p.score <= 100);
 
-    // Populate Top 10 List
-    document.getElementById("top10").innerHTML = top10Data.map((p, index) => `
-      <div class="card">
-        <div class="rank">#${index + 1}</div>
-        <img src="${p.image_url || 'https://via.placeholder.com/45?text=' + p.name.charAt(0)}" onclick="showLargeImage('${p.image_url}')" />
-        <div class="info">
-          <h4 onclick="showUserInfo('${p.name}', '${p.district}', ${p.score})">${p.name}</h4>
-          <p>${p.district}</p>
-        </div>
-        <div class="score">⭐ ${p.score}</div>
-      </div>
-    `).join("");
+    if (topScorers.length > 0) {
+      startScorerShuffle(topScorers); // Start the slow animated shuffle
+    } else {
+      document.getElementById("top10").innerHTML = "<p class='loading-text'>No top scorers yet!</p>";
+    }
 
     // Filter Eligible VIPs strictly by their is_eligible status in MySQL
     const eligiblePerformers = data.filter(p => p.is_eligible === 1 || p.is_eligible === true);
@@ -57,6 +51,43 @@ async function loadTop10() {
   }
 }
 
+/* 🔴 NEW: SLOW ANIMATED SHUFFLE LOGIC */
+function startScorerShuffle(scorers) {
+  const grid = document.getElementById("top10");
+  
+  // Apply a very slow, smooth fade CSS transition to the grid
+  grid.style.transition = "opacity 1.5s ease-in-out"; 
+  
+  function updateGrid() {
+    grid.style.opacity = 0; // Trigger fade out
+    
+    setTimeout(() => {
+      // Shuffle the array randomly while hidden
+      const shuffled = [...scorers].sort(() => Math.random() - 0.5);
+      
+      // Re-render without the <div class="rank"> numbering
+      grid.innerHTML = shuffled.map(p => `
+        <div class="card">
+          <img src="${p.image_url || 'https://via.placeholder.com/45?text=' + p.name.charAt(0)}" onclick="showLargeImage('${p.image_url}')" />
+          <div class="info">
+            <h4 onclick="showUserInfo('${p.name}', '${p.district}', ${p.score})">${p.name}</h4>
+            <p>${p.district}</p>
+          </div>
+          <div class="score">⭐ ${p.score}</div>
+        </div>
+      `).join("");
+      
+      grid.style.opacity = 1; // Trigger slow fade back in
+    }, 1500); // Wait 1.5 seconds for the fade-out to completely finish
+  }
+  
+  updateGrid(); // Run the first time immediately
+  
+  if (shuffleTimer) clearInterval(shuffleTimer);
+  shuffleTimer = setInterval(updateGrid, 7000); // Repeat the fade shuffle every 7 seconds
+}
+
+
 /* 2. DYNAMIC WHEEL GENERATOR */
 function renderWheel(candidates) {
   const wheel = document.getElementById("wheel");
@@ -72,24 +103,20 @@ function renderWheel(candidates) {
   let gradientString = 'conic-gradient(from 0deg, ';
 
   candidates.forEach((c, i) => {
-    // 1. Build Gradient color block
     const color = colors[i % colors.length];
     const startAngle = i * sliceAngle;
     const endAngle = (i + 1) * sliceAngle;
     gradientString += `${color} ${startAngle}deg ${endAngle}deg${i < candidates.length - 1 ? ', ' : ''}`;
 
-    // 2. Add Name Label
     const textEl = document.createElement("div");
     textEl.className = "wheel-text";
-    textEl.innerText = c.name.split(' ')[0]; // Only use first name to fit slice
+    textEl.innerText = c.name.split(' ')[0]; 
 
-    // 3. Position text exactly in the middle of the slice
     const textAngle = startAngle + (sliceAngle / 2) - 90;
     textEl.style.transform = `translateY(-50%) rotate(${textAngle}deg) translateX(65px)`;
 
     wheel.appendChild(textEl);
 
-    // 4. ADD BLACK BORDER LINE 
     const lineEl = document.createElement("div");
     lineEl.className = "slice-border";
     lineEl.style.transform = `rotate(${endAngle}deg)`;
@@ -100,7 +127,7 @@ function renderWheel(candidates) {
   wheel.style.background = gradientString;
 }
 
-/* 3. LIVE TIMER FUNCTION (FETCHED FROM DB) */
+/* 3. LIVE TIMER FUNCTION */
 async function loadTimer() {
   try {
     const res = await fetch(API + "/event");
@@ -163,14 +190,12 @@ async function spin() {
   winnerText.innerText = "Spinning...";
   winnerText.style.color = "white";
 
-  // Play Sound immediately
   if (spinSound) {
       spinSound.currentTime = 0;
       spinSound.play().catch(err => console.log("Audio blocked:", err));
   }
 
   try {
-    // 1. Ask backend for the winner FIRST
     const res = await fetch(API + "/spin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -180,26 +205,22 @@ async function spin() {
     if (!res.ok) throw new Error("Server error");
     const data = await res.json();
 
-    // 2. Start Animation
     isSpinning = true;
     wheel.classList.add("spinning");
 
-    // 3. Calculate exact stopping angle to land on the winner's name
     let finalAngle = Math.floor(Math.random() * 360);
     const winnerIndex = window.currentEligible ? window.currentEligible.findIndex(p => p.name === data.name) : -1;
 
     if (winnerIndex !== -1) {
         const sliceAngle = 360 / window.currentEligible.length;
         const middleAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
-        finalAngle = 360 - middleAngle; // Math to align slice center to the top pointer
+        finalAngle = 360 - middleAngle; 
     }
 
-    // 4. Add 5 full spins and apply
     const currentMod = currentRotation % 360;
     currentRotation = currentRotation + (360 - currentMod) + 1800 + finalAngle; 
     wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-    // 5. Wait for CSS transition (5s) to finish before showing winner text and image
     setTimeout(() => {
       winnerText.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: center; gap: 20px; animation: popIn 0.5s cubic-bezier(0.17, 0.67, 0.12, 0.99);">
@@ -281,7 +302,7 @@ async function fetchAndAnimate(fetchUrl) {
     const data = await res.json();
     
     const counterEl = document.getElementById("view-count");
-    if(!counterEl) return; // safeguard if element doesn't exist
+    if(!counterEl) return; 
     const currentCount = parseInt(counterEl.innerText) || 0;
     const newCount = data.views;
 
