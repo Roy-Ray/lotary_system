@@ -5,7 +5,8 @@ let isSpinning = false;
 /* 1. LOAD LEADERBOARD & ELIGIBLE PERFORMERS FROM DATABASE */
 async function loadTop10() {
   try {
-    const res = await fetch(API + "/top10");
+    // 🔴 FETCH ALL PARTICIPANTS so we don't miss anyone who is eligible but ranked > 10
+    const res = await fetch(API + "/participants");
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     
     let data = await res.json();
@@ -15,10 +16,14 @@ async function loadTop10() {
       return;
     }
 
+    // Sort descending by score
     data.sort((a, b) => b.score - a.score);
 
+    // 🔴 Slice the Top 10 specifically for the Leaderboard UI
+    const top10Data = data.slice(0, 10);
+
     // Populate Top 10 List
-    document.getElementById("top10").innerHTML = data.map((p, index) => `
+    document.getElementById("top10").innerHTML = top10Data.map((p, index) => `
       <div class="card">
         <div class="rank">#${index + 1}</div>
         <img src="${p.image_url || 'https://via.placeholder.com/45?text=' + p.name.charAt(0)}" onclick="showLargeImage('${p.image_url}')" />
@@ -30,8 +35,8 @@ async function loadTop10() {
       </div>
     `).join("");
 
-    // Filter Eligible VIPs
-    const eligiblePerformers = data.filter(p => p.score === 100);
+    // 🔴 Filter Eligible VIPs strictly by their is_eligible status in MySQL
+    const eligiblePerformers = data.filter(p => p.is_eligible === 1 || p.is_eligible === true);
     window.currentEligible = eligiblePerformers; // Save globally for spin physics
 
     if (eligiblePerformers.length > 0) {
@@ -45,7 +50,7 @@ async function loadTop10() {
       
       renderWheel(eligiblePerformers); // Generate the wheel with names
     } else {
-      document.getElementById("eligible-list").innerHTML = "<p class='loading-text'>No perfect scorers yet!</p>";
+      document.getElementById("eligible-list").innerHTML = "<p class='loading-text'>No eligible participants yet!</p>";
       renderWheel([]); 
     }
   } catch (error) {
@@ -154,8 +159,10 @@ async function spin() {
   winnerText.style.color = "white";
 
   // Play Sound immediately
-  spinSound.currentTime = 0;
-  spinSound.play().catch(err => console.log(err));
+  if (spinSound) {
+      spinSound.currentTime = 0;
+      spinSound.play().catch(err => console.log("Audio blocked:", err));
+  }
 
   try {
     // 1. Ask backend for the winner FIRST
@@ -260,6 +267,7 @@ async function fetchAndAnimate(fetchUrl) {
     const data = await res.json();
     
     const counterEl = document.getElementById("view-count");
+    if(!counterEl) return; // safeguard if element doesn't exist
     const currentCount = parseInt(counterEl.innerText) || 0;
     const newCount = data.views;
 
