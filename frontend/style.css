@@ -151,7 +151,7 @@ body {
   transform-origin: left center;
   color: white;
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 0.85rem;
   text-shadow: 0 0 5px #000, 0 0 10px #000;
   white-space: nowrap;
   z-index: 5;
@@ -161,24 +161,12 @@ body {
 .slice-border {
   position: absolute;
   top: 0;
-  left: 50%;
+  left: calc(50% - 2px); /* Mathematically perfect center for a 4px line */
   width: 4px; /* Thickness of the black border */
   height: 50%; /* Reaches from the center to the edge */
   background-color: #1a0b2e; /* Deep dark background color for the border */
   transform-origin: bottom center;
   z-index: 4; /* Sits behind the text, but above the colors */
-}
-
-.wheel::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  border-radius: 50%;
-  background: 
-    linear-gradient(0deg, transparent 49%, rgba(0,0,0,0.8) 49.5%, rgba(0,0,0,0.8) 50.5%, transparent 51%),
-    linear-gradient(60deg, transparent 49%, rgba(0,0,0,0.8) 49.5%, rgba(0,0,0,0.8) 50.5%, transparent 51%),
-    linear-gradient(120deg, transparent 49%, rgba(0,0,0,0.8) 49.5%, rgba(0,0,0,0.8) 50.5%, transparent 51%);
-  pointer-events: none;
 }
 
 .wheel.spinning {

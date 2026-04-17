@@ -5,7 +5,6 @@ let isSpinning = false;
 /* 1. LOAD LEADERBOARD & ELIGIBLE PERFORMERS FROM DATABASE */
 async function loadTop10() {
   try {
-    // 🔴 FETCH ALL PARTICIPANTS so we don't miss anyone who is eligible but ranked > 10
     const res = await fetch(API + "/participants");
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     
@@ -19,7 +18,7 @@ async function loadTop10() {
     // Sort descending by score
     data.sort((a, b) => b.score - a.score);
 
-    // 🔴 Slice the Top 10 specifically for the Leaderboard UI
+    // Slice the Top 10 specifically for the Leaderboard UI
     const top10Data = data.slice(0, 10);
 
     // Populate Top 10 List
@@ -35,7 +34,7 @@ async function loadTop10() {
       </div>
     `).join("");
 
-    // 🔴 Filter Eligible VIPs strictly by their is_eligible status in MySQL
+    // Filter Eligible VIPs strictly by their is_eligible status in MySQL
     const eligiblePerformers = data.filter(p => p.is_eligible === 1 || p.is_eligible === true);
     window.currentEligible = eligiblePerformers; // Save globally for spin physics
 
@@ -86,14 +85,14 @@ function renderWheel(candidates) {
 
     // 3. Position text exactly in the middle of the slice
     const textAngle = startAngle + (sliceAngle / 2) - 90;
-    textEl.style.transform = `translateY(-50%) rotate(${textAngle}deg) translateX(55px)`;
+    textEl.style.transform = `translateY(-50%) rotate(${textAngle}deg) translateX(65px)`;
 
     wheel.appendChild(textEl);
 
-    // 4. ADD BLACK BORDER LINE (NEW)
+    // 4. ADD BLACK BORDER LINE 
     const lineEl = document.createElement("div");
     lineEl.className = "slice-border";
-    lineEl.style.transform = `translateX(-50%) rotate(${endAngle}deg)`;
+    lineEl.style.transform = `rotate(${endAngle}deg)`;
     wheel.appendChild(lineEl);
   });
 
@@ -200,10 +199,19 @@ async function spin() {
     currentRotation = currentRotation + (360 - currentMod) + 1800 + finalAngle; 
     wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-    // 5. Wait for CSS transition (5s) to finish before showing winner text
+    // 5. Wait for CSS transition (5s) to finish before showing winner text and image
     setTimeout(() => {
-      winnerText.innerHTML = `🎉 Winner: <strong>${data.name}</strong><br><small>${data.district}</small>`;
-      winnerText.style.color = "#00ffcc";
+      winnerText.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; gap: 20px; animation: popIn 0.5s cubic-bezier(0.17, 0.67, 0.12, 0.99);">
+            <img src="${data.image_url || 'https://via.placeholder.com/100'}" 
+                 style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid #00ffcc; box-shadow: 0 0 25px rgba(0, 255, 204, 0.8); object-fit: cover;">
+            <div style="text-align: left; line-height: 1.2;">
+                <span style="font-size: 1rem; color: #fff; text-transform: uppercase; letter-spacing: 2px;">🎉 Winner</span><br>
+                <strong style="color: #00ffcc; font-size: 2.2rem; text-shadow: 0 0 15px #00ffcc;">${data.name}</strong><br>
+                <span style="color: #ffcc00; font-size: 1.1rem;">📍 ${data.district}</span>
+            </div>
+        </div>
+      `;
       
       setTimeout(() => {
         wheel.classList.remove("spinning"); 
