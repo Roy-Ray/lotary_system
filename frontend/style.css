@@ -497,7 +497,7 @@ button {
 .user-popup p { color: #ccc; margin-bottom: 15px; font-size: 1.1rem; }
 .popup-score { font-size: 1.4rem; color: #ffcc00; font-weight: bold; }
 
-/* --- Asha Bhosle Ji Container --- */
+/* 🔴 PERFECT PARALLEL ALIGNMENT (DESKTOP) */
 .asha-container {
   position: absolute;
   top: 30px;
@@ -505,6 +505,13 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 1000;
+}
+
+.live-viewer-container {
+  position: absolute;
+  top: 30px;
+  right: 30px;
   z-index: 1000;
 }
 
@@ -538,14 +545,6 @@ button {
   color: #ffcc00; 
   text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
   letter-spacing: 1px;
-}
-
-/* --- Live Viewer Container (Top Right) --- */
-.live-viewer-container {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  z-index: 1000;
 }
 
 /* --- Glowing Live Viewer Pill --- */
@@ -690,7 +689,7 @@ button {
   }
 }
 
-/* 🔴 Mobile Phones (Standard size) - Wheel Resizing & Centering Fixes */
+/* Mobile Phones (Standard size) - Wheel Resizing & Centering Fixes */
 @media (max-width: 600px) {
   .container { padding: 15px 10px; }
   .glass-panel { padding: 20px 10px; }
@@ -724,7 +723,7 @@ button {
   .wheel-text { font-size: 0.85rem; }
 }
 
-/* 🔴 Small Mobile Phones (iPhone SE, older devices) */
+/* Small Mobile Phones (iPhone SE, older devices) */
 @media (max-width: 400px) {
   .wheel-container { width: 260px; height: 260px; margin: 0 auto 20px auto; }
   .center-spin-btn { width: 65px; height: 65px; font-size: 1.6rem; }
