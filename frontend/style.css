@@ -93,32 +93,16 @@ body {
   align-items: center;
 }
 
-/* 🔴 FIXED WINNER TEXT FOR MOBILE STACKING */
 .winner-text {
   font-size: 1.8rem;
   font-weight: 800;
-  min-height: 75px; /* Slightly taller to accommodate stacked text */
+  min-height: 45px;
   color: #fff;
   margin-bottom: 30px;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 0 15px #ff00cc, 0 0 30px #ff00cc;
   transition: all 0.3s ease;
-  line-height: 1.4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 100%;
-  padding: 0 10px;
-}
-
-.winner-text strong {
-  display: block; /* Pushes the name to its own line */
-  margin-top: 5px;
-  font-size: 1.25em; /* Makes the name slightly larger than "Winner" */
-  word-break: break-word; /* Prevents overflow */
 }
 
 .wheel-container {
@@ -173,16 +157,16 @@ body {
   z-index: 5;
 }
 
-/* --- Wheel Slice Borders --- */
+/* --- NEW: Wheel Slice Borders --- */
 .slice-border {
   position: absolute;
   top: 0;
-  left: calc(50% - 2px); 
-  width: 4px; 
-  height: 50%; 
-  background-color: #1a0b2e; 
+  left: calc(50% - 2px); /* Mathematically perfect center for a 4px line */
+  width: 4px; /* Thickness of the black border */
+  height: 50%; /* Reaches from the center to the edge */
+  background-color: #1a0b2e; /* Deep dark background color for the border */
   transform-origin: bottom center;
-  z-index: 4; 
+  z-index: 4; /* Sits behind the text, but above the colors */
 }
 
 .wheel.spinning {
@@ -277,6 +261,13 @@ body {
   background: rgba(0, 255, 204, 0.1);
 }
 
+.card .rank {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffcc00;
+  min-width: 35px;
+}
+
 .card img {
   width: 70px;  
   height: 70px;
@@ -331,7 +322,7 @@ body {
   height: 100%;
   background: rgba(0,0,0,0.8);
   top: 0; left: 0;
-  z-index: 3000; 
+  z-index: 3000; /* FIXED Z-INDEX FOR MOBILE OVERLAP */
   backdrop-filter: blur(5px);
 }
 
@@ -590,14 +581,67 @@ button {
 @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 /* ==================================================================== */
-/* 🏆 WINNER REVEAL POPUP STYLES                                        */
+/* MOBILE RESPONSIVENESS FIXES                     */
+/* ==================================================================== */
+
+/* Standard Tablets & Larger Phones */
+@media (max-width: 850px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .asha-container {
+    position: relative; 
+    top: 0;
+    left: 0;
+    margin: 20px auto 10px auto; 
+  }
+  
+  .asha-canvas {
+    width: 100px; 
+    height: 100px;
+  }
+
+  /* Centers the live counter under Asha Ji on mobile screens */
+  .live-viewer-container {
+    position: relative;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+}
+
+/* Mobile Phones (Standard size) */
+@media (max-width: 600px) {
+  .container { padding: 15px 10px; }
+  .glass-panel { padding: 20px 15px; }
+
+  .header h1 { font-size: 2.2rem; }
+  .timer { font-size: 1.2rem; padding: 8px 15px; }
+  .winner-text { font-size: 1.4rem; margin-bottom: 20px; }
+
+  .card { padding: 10px 15px; }
+  .card img { width: 50px; height: 50px; margin-right: 15px; }
+  .card .rank { font-size: 1rem; min-width: 25px; }
+  .card h4 { font-size: 0.95rem; }
+  
+  .wheel-text { font-size: 0.85rem; }
+}
+
+
+
+
+/* ==================================================================== */
+/* 🏆 NEW WINNER REVEAL POPUP STYLES                                    */
 /* ==================================================================== */
 .winner-modal {
   display: none;
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.9);
-  z-index: 9999; 
+  z-index: 9999; /* Stays above everything, including confetti */
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -649,71 +693,17 @@ button {
   color: #fff;
   letter-spacing: 2px;
 }
+/* Small Mobile Phones (iPhone SE, older devices) */
 
-/* ==================================================================== */
-/* MOBILE RESPONSIVENESS FIXES                     */
-/* ==================================================================== */
-
-/* Standard Tablets & Larger Phones */
-@media (max-width: 850px) {
-  .main-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .asha-container {
-    position: relative; 
-    top: 0;
-    left: 0;
-    margin: 20px auto 10px auto; 
-  }
-  
-  .asha-canvas {
-    width: 100px; 
-    height: 100px;
-  }
-
-  .live-viewer-container {
-    position: relative;
-    top: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-}
-
-/* 🔴 Mobile Phones (Standard size) - Wheel Resizing included */
-@media (max-width: 600px) {
-  .container { padding: 15px 10px; }
-  .glass-panel { padding: 20px 15px; }
-
-  .header h1 { font-size: 2.2rem; }
-  .timer { font-size: 1.2rem; padding: 8px 15px; }
-  
-  .winner-text { font-size: 1.3rem; margin-bottom: 20px; }
-  
-  .wheel-container { width: 300px; height: 300px; } /* Scales down smoothly */
-
-  .card { padding: 10px 15px; }
-  .card img { width: 50px; height: 50px; margin-right: 15px; }
-  .card .rank { font-size: 1rem; min-width: 25px; }
-  .card h4 { font-size: 0.95rem; }
-  
-  .wheel-text { font-size: 0.85rem; }
-}
-
-/* 🔴 Small Mobile Phones (iPhone SE, older devices) */
 @media (max-width: 400px) {
   .wheel-container { width: 260px; height: 260px; }
   .center-spin-btn { width: 65px; height: 65px; font-size: 1.6rem; }
-  
-  .pointer { width: 35px; height: 50px; top: -15px; } /* Fixes pointer clipping on small screens */
+  .pointer { width: 30px; height: 40px; top: -15px; }
   
   .header h1 { font-size: 1.8rem; }
-  .winner-text { font-size: 1.1rem; }
   
   .eligible-badge { padding: 8px 15px; }
   .eligible-badge img { width: 30px; height: 30px; margin-right: 10px; }
   
-  .wheel-text { font-size: 0.65rem; } /* Ensures text fits the smaller slices */
+  .wheel-text { font-size: 0.7rem; }
 }
