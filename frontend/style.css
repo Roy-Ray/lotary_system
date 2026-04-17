@@ -82,7 +82,8 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 30px;
-  align-items: start;
+  /* 🔴 FORCE BOTH PANELS TO BE THE SAME HEIGHT */
+  align-items: stretch; 
 }
 
 /* --- The Awesome Wheel Spinner --- */
@@ -91,9 +92,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* 🔴 CENTERS THE WHEEL VERTICALLY INSIDE THE TALLER BOX */
+  justify-content: center; 
+  height: 100%; 
 }
 
-/* 🔴 FIXED WINNER TEXT FOR MOBILE STACKING */
 .winner-text {
   font-size: 1.8rem;
   font-weight: 800;
@@ -240,6 +243,12 @@ body {
 }
 
 /* --- Leaderboard List --- */
+.leaderboard-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .leaderboard-section h2 {
   margin-bottom: 20px;
   text-align: center;
@@ -667,13 +676,12 @@ button {
     grid-template-columns: 1fr;
   }
   
-  /* OVERRIDE ABSOLUTE POSITIONING TO STACK IN CENTER */
   .asha-container {
     position: relative; 
     top: 0;
     left: 0;
     margin: 20px auto 10px auto; 
-    transform: none; /* remove desktop scale */
+    transform: none; 
   }
 
   .asha-canvas {
@@ -691,7 +699,7 @@ button {
   }
   
   .header {
-    margin-top: 0; /* Reset */
+    margin-top: 0; 
   }
 }
 
@@ -703,7 +711,6 @@ button {
   .header h1 { font-size: 2.2rem; }
   .timer { font-size: 1.2rem; padding: 8px 15px; }
   
-  /* Forces text to center perfectly */
   .winner-text { 
     font-size: 1.3rem; 
     margin-bottom: 20px; 
@@ -714,7 +721,6 @@ button {
     align-items: center;
   }
   
-  /* Locks the wheel in the center */
   .wheel-container { 
     width: 300px; 
     height: 300px; 
