@@ -723,6 +723,27 @@ button {
   .wheel-text { font-size: 0.85rem; }
 }
 
+/* 🔥 Live Counter Enhancements */
+.live-viewer-pill {
+  animation: livePulse 2s infinite alternate;
+}
+
+@keyframes livePulse {
+  0% { box-shadow: 0 0 10px rgba(0,255,204,0.3); }
+  100% { box-shadow: 0 0 25px rgba(0,255,204,0.8); }
+}
+
+/* 🔴 Faster & stronger blinking dot */
+.live-dot {
+  animation: blink 1s infinite;
+}
+
+/* 🔢 Smooth number animation */
+#view-count {
+  transition: all 0.3s ease;
+}
+
+
 /* Small Mobile Phones (iPhone SE, older devices) */
 @media (max-width: 400px) {
   .wheel-container { width: 260px; height: 260px; margin: 0 auto 20px auto; }
