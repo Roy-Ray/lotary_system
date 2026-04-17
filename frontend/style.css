@@ -575,7 +575,12 @@ button {
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* --- MOBILE RESPONSIVENESS FIX --- */
+
+/* ==================================================================== */
+/* MOBILE RESPONSIVENESS FIXES                     */
+/* ==================================================================== */
+
+/* Standard Tablets & Larger Phones */
 @media (max-width: 850px) {
   .main-content {
     grid-template-columns: 1fr;
@@ -601,5 +606,79 @@ button {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+  }
+}
+
+/* Mobile Phones (Standard size) */
+@media (max-width: 600px) {
+  /* Prevent horizontal scroll by reducing heavy padding */
+  .container {
+    padding: 15px 10px;
+  }
+  .glass-panel {
+    padding: 20px 15px;
+  }
+
+  /* Scale down header fonts */
+  .header h1 {
+    font-size: 2.2rem;
+  }
+  .timer {
+    font-size: 1.2rem;
+    padding: 8px 15px;
+  }
+  .winner-text {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+
+  /* Adjust leaderboard cards to fit nicely */
+  .card {
+    padding: 10px 15px;
+  }
+  .card img {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+  }
+  .card .rank {
+    font-size: 1rem;
+    min-width: 25px;
+  }
+  .card h4 {
+    font-size: 0.95rem;
+  }
+}
+
+/* Small Mobile Phones (iPhone SE, older devices) */
+@media (max-width: 400px) {
+  /* Shrink the wheel proportionately so it doesn't break out of the container */
+  .wheel-container {
+    width: 260px;
+    height: 260px;
+  }
+  .center-spin-btn {
+    width: 65px;
+    height: 65px;
+    font-size: 1.6rem;
+  }
+  .pointer {
+    width: 30px;
+    height: 40px;
+    top: -15px;
+  }
+  
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  
+  /* Make sure badges don't stretch */
+  .eligible-badge {
+    padding: 8px 15px;
+  }
+  .eligible-badge img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
   }
 }
