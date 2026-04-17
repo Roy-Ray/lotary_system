@@ -97,7 +97,7 @@ body {
 .winner-text {
   font-size: 1.8rem;
   font-weight: 800;
-  min-height: 75px; /* Slightly taller to accommodate stacked text */
+  min-height: 75px; 
   color: #fff;
   margin-bottom: 30px;
   text-transform: uppercase;
@@ -115,10 +115,10 @@ body {
 }
 
 .winner-text strong {
-  display: block; /* Pushes the name to its own line */
+  display: block; 
   margin-top: 5px;
-  font-size: 1.25em; /* Makes the name slightly larger than "Winner" */
-  word-break: break-word; /* Prevents overflow */
+  font-size: 1.25em; 
+  word-break: break-word; 
 }
 
 .wheel-container {
@@ -128,7 +128,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin: 0 auto 20px auto; /* Forces center alignment */
 }
 
 .wheel-rim {
@@ -338,8 +338,13 @@ body {
 .modal-content {
   width: 90%;
   max-width: 400px;
-  margin: 15vh auto;
+  /* 🔴 BULLETPROOF CENTERING FIX FOR MODAL */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
+  box-sizing: border-box; 
 }
 
 .modal-content h3 { margin-bottom: 10px; color: #00ffcc; }
@@ -682,17 +687,31 @@ button {
   }
 }
 
-/* 🔴 Mobile Phones (Standard size) - Wheel Resizing included */
+/* 🔴 Mobile Phones (Standard size) - Wheel Resizing & Centering Fixes */
 @media (max-width: 600px) {
   .container { padding: 15px 10px; }
-  .glass-panel { padding: 20px 15px; }
+  .glass-panel { padding: 20px 10px; }
 
   .header h1 { font-size: 2.2rem; }
   .timer { font-size: 1.2rem; padding: 8px 15px; }
   
-  .winner-text { font-size: 1.3rem; margin-bottom: 20px; }
+  /* Forces text to center perfectly */
+  .winner-text { 
+    font-size: 1.3rem; 
+    margin-bottom: 20px; 
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   
-  .wheel-container { width: 300px; height: 300px; } /* Scales down smoothly */
+  /* Locks the wheel in the center */
+  .wheel-container { 
+    width: 300px; 
+    height: 300px; 
+    margin: 0 auto 20px auto; 
+  } 
 
   .card { padding: 10px 15px; }
   .card img { width: 50px; height: 50px; margin-right: 15px; }
@@ -704,10 +723,10 @@ button {
 
 /* 🔴 Small Mobile Phones (iPhone SE, older devices) */
 @media (max-width: 400px) {
-  .wheel-container { width: 260px; height: 260px; }
+  .wheel-container { width: 260px; height: 260px; margin: 0 auto 20px auto; }
   .center-spin-btn { width: 65px; height: 65px; font-size: 1.6rem; }
   
-  .pointer { width: 35px; height: 50px; top: -15px; } /* Fixes pointer clipping on small screens */
+  .pointer { width: 35px; height: 50px; top: -15px; } 
   
   .header h1 { font-size: 1.8rem; }
   .winner-text { font-size: 1.1rem; }
@@ -715,5 +734,5 @@ button {
   .eligible-badge { padding: 8px 15px; }
   .eligible-badge img { width: 30px; height: 30px; margin-right: 10px; }
   
-  .wheel-text { font-size: 0.65rem; } /* Ensures text fits the smaller slices */
+  .wheel-text { font-size: 0.65rem; } 
 }
