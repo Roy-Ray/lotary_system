@@ -494,7 +494,7 @@ button {
 .user-popup p { color: #ccc; margin-bottom: 15px; font-size: 1.1rem; }
 .popup-score { font-size: 1.4rem; color: #ffcc00; font-weight: bold; }
 
-/* 🔴 PERFECT PARALLEL ALIGNMENT (DESKTOP) */
+/* 🔴 PARALLEL TOP CORNER ALIGNMENT (DESKTOP) */
 .asha-container {
   position: absolute;
   top: 30px;
@@ -558,6 +558,7 @@ button {
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.3); 
   backdrop-filter: blur(5px);
   transition: transform 0.3s ease;
+  animation: livePulse 2s infinite alternate;
 }
 
 .live-viewer-pill:hover {
@@ -572,19 +573,24 @@ button {
   border-radius: 50%;
   margin-right: 8px;
   box-shadow: 0 0 10px #ff0055;
-  animation: blink 1.5s infinite;
+  animation: blink 1s infinite;
 }
 
 #view-count {
-  margin-left: 5px;
   color: #fff; 
   font-weight: 800;
   font-size: 1.1rem;
+  transition: all 0.3s ease;
 }
 
 @keyframes blink {
   0%, 100% { opacity: 1; box-shadow: 0 0 15px #ff0055; }
   50% { opacity: 0.4; box-shadow: 0 0 5px #ff0055; }
+}
+
+@keyframes livePulse {
+  0% { box-shadow: 0 0 10px rgba(0,255,204,0.3); }
+  100% { box-shadow: 0 0 25px rgba(0,255,204,0.8); }
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -652,7 +658,7 @@ button {
 }
 
 /* ==================================================================== */
-/* 🔴 MOBILE RESPONSIVENESS FIXES                                       */
+/* 🔴 MOBILE RESPONSIVENESS (CENTERED STACK)                            */
 /* ==================================================================== */
 
 /* Standard Tablets & Larger Phones */
@@ -661,26 +667,31 @@ button {
     grid-template-columns: 1fr;
   }
   
+  /* OVERRIDE ABSOLUTE POSITIONING TO STACK IN CENTER */
   .asha-container {
-    position: absolute; 
-    top: 15px;
-    left: 15px;
-    margin: 0; 
-    transform: scale(0.65);
-    transform-origin: top left;
+    position: relative; 
+    top: 0;
+    left: 0;
+    margin: 20px auto 10px auto; 
+    transform: none; /* remove desktop scale */
+  }
+
+  .asha-canvas {
+    width: 120px; 
+    height: 120px;
   }
 
   .live-viewer-container {
-    position: absolute;
-    top: 25px;
-    right: 15px;
-    margin: 0;
-    transform: scale(0.8);
-    transform-origin: top right;
+    position: relative;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
   }
   
   .header {
-    margin-top: 80px; 
+    margin-top: 0; /* Reset */
   }
 }
 
@@ -692,6 +703,7 @@ button {
   .header h1 { font-size: 2.2rem; }
   .timer { font-size: 1.2rem; padding: 8px 15px; }
   
+  /* Forces text to center perfectly */
   .winner-text { 
     font-size: 1.3rem; 
     margin-bottom: 20px; 
@@ -702,6 +714,7 @@ button {
     align-items: center;
   }
   
+  /* Locks the wheel in the center */
   .wheel-container { 
     width: 300px; 
     height: 300px; 
@@ -713,7 +726,6 @@ button {
   .card .rank { font-size: 1rem; min-width: 25px; }
   .card h4 { font-size: 0.95rem; }
   
-  /* 🔥 FIX: Smaller text on mobile so it fits inside the circle */
   .wheel-text { font-size: 0.65rem; letter-spacing: 0.5px; }
 }
 
@@ -730,10 +742,9 @@ button {
   .eligible-badge { padding: 8px 15px; }
   .eligible-badge img { width: 30px; height: 30px; margin-right: 10px; }
   
-  /* 🔥 FIX: Even smaller text for very tiny phone screens */
   .wheel-text { font-size: 0.55rem; } 
   
-  .asha-container { transform: scale(0.55); top: 10px; left: 10px; }
-  .live-viewer-container { transform: scale(0.7); top: 15px; right: 10px; }
-  .header { margin-top: 60px; }
+  .asha-canvas { width: 90px; height: 90px; }
+  .asha-caption { font-size: 1rem; }
+  .live-viewer-pill { padding: 6px 15px; font-size: 0.85rem; }
 }
