@@ -1,7 +1,7 @@
 const API = window.location.origin;
 let currentRotation = 0;
 let isSpinning = false; 
-let shuffleTimer; // Tracks the animated shuffle loop
+let shuffleTimer; 
 
 /* 1. LOAD LEADERBOARD & ELIGIBLE PERFORMERS FROM DATABASE */
 async function loadTop10() {
@@ -16,21 +16,17 @@ async function loadTop10() {
       return;
     }
 
-    // 🔴 Change Title Dynamically
     document.querySelector(".leaderboard-section h2").innerText = "🏆 Top Scorers (90 - 100)";
-
-    // 🔴 Filter ONLY participants who scored between 90 and 100
     const topScorers = data.filter(p => p.score >= 90 && p.score <= 100);
 
     if (topScorers.length > 0) {
-      startScorerShuffle(topScorers); // Start the slow animated shuffle
+      startScorerShuffle(topScorers); 
     } else {
       document.getElementById("top10").innerHTML = "<p class='loading-text'>No top scorers yet!</p>";
     }
 
-    // Filter Eligible VIPs strictly by their is_eligible status in MySQL
     const eligiblePerformers = data.filter(p => p.is_eligible === 1 || p.is_eligible === true);
-    window.currentEligible = eligiblePerformers; // Save globally for spin physics
+    window.currentEligible = eligiblePerformers; 
 
     if (eligiblePerformers.length > 0) {
       const badgesHTML = eligiblePerformers.map(p => `
@@ -41,7 +37,7 @@ async function loadTop10() {
       `).join("");
       document.getElementById("eligible-list").innerHTML = badgesHTML + badgesHTML;
       
-      renderWheel(eligiblePerformers); // Generate the wheel with names
+      renderWheel(eligiblePerformers); 
     } else {
       document.getElementById("eligible-list").innerHTML = "<p class='loading-text'>No eligible participants yet!</p>";
       renderWheel([]); 
@@ -51,21 +47,15 @@ async function loadTop10() {
   }
 }
 
-/* 🔴 NEW: SLOW ANIMATED SHUFFLE LOGIC */
 function startScorerShuffle(scorers) {
   const grid = document.getElementById("top10");
-  
-  // Apply a very slow, smooth fade CSS transition to the grid
   grid.style.transition = "opacity 1.5s ease-in-out"; 
   
   function updateGrid() {
-    grid.style.opacity = 0; // Trigger fade out
+    grid.style.opacity = 0; 
     
     setTimeout(() => {
-      // Shuffle the array randomly while hidden
       const shuffled = [...scorers].sort(() => Math.random() - 0.5);
-      
-      // Re-render without the <div class="rank"> numbering
       grid.innerHTML = shuffled.map(p => `
         <div class="card">
           <img src="${p.image_url || 'https://via.placeholder.com/45?text=' + p.name.charAt(0)}" onclick="showLargeImage('${p.image_url}')" />
@@ -77,21 +67,19 @@ function startScorerShuffle(scorers) {
         </div>
       `).join("");
       
-      grid.style.opacity = 1; // Trigger slow fade back in
-    }, 1500); // Wait 1.5 seconds for the fade-out to completely finish
+      grid.style.opacity = 1; 
+    }, 1500); 
   }
   
-  updateGrid(); // Run the first time immediately
-  
+  updateGrid(); 
   if (shuffleTimer) clearInterval(shuffleTimer);
-  shuffleTimer = setInterval(updateGrid, 7000); // Repeat the fade shuffle every 7 seconds
+  shuffleTimer = setInterval(updateGrid, 7000); 
 }
-
 
 /* 2. DYNAMIC WHEEL GENERATOR */
 function renderWheel(candidates) {
   const wheel = document.getElementById("wheel");
-  wheel.innerHTML = ""; // Clear existing slices
+  wheel.innerHTML = ""; 
 
   if (!candidates || candidates.length === 0) {
     wheel.style.background = "conic-gradient(from 0deg, #FF0055 0deg 360deg)";
@@ -142,7 +130,6 @@ async function loadTimer() {
     const eventTime = new Date(data.event_time).getTime();
     runCountdown(eventTime);
   } catch (error) {
-    console.error("❌ Error loading event time:", error);
     document.getElementById("event-name").innerText = "আশার আলো, ছকে খেলো";
     document.getElementById("organizer-name").innerText = "Dipon Bandyapadyay & Team™";
     runCountdown(new Date("2026-04-17T11:23:00").getTime());
@@ -172,7 +159,7 @@ function runCountdown(eventTime) {
   }, 1000);
 }
 
-/* 4. SPIN LOGIC WITH ACCURATE LANDING PHYSICS */
+/* 4. SPIN LOGIC WITH CONFETTI & APPLAUSE EFFECTS */
 async function spin() {
   const code = document.getElementById("code").value;
 
@@ -221,23 +208,59 @@ async function spin() {
     currentRotation = currentRotation + (360 - currentMod) + 1800 + finalAngle; 
     wheel.style.transform = `rotate(${currentRotation}deg)`;
 
+    // TRIGGER WINNER REVEAL AFTER 5 SECONDS
     setTimeout(() => {
-      winnerText.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: center; gap: 20px; animation: popIn 0.5s cubic-bezier(0.17, 0.67, 0.12, 0.99);">
-            <img src="${data.image_url || 'https://via.placeholder.com/100'}" 
-                 style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid #00ffcc; box-shadow: 0 0 25px rgba(0, 255, 204, 0.8); object-fit: cover;">
-            <div style="text-align: left; line-height: 1.2;">
-                <span style="font-size: 1rem; color: #fff; text-transform: uppercase; letter-spacing: 2px;">🎉 Winner</span><br>
-                <strong style="color: #00ffcc; font-size: 2.2rem; text-shadow: 0 0 15px #00ffcc;">${data.name}</strong><br>
-                <span style="color: #ffcc00; font-size: 1.1rem;">📍 ${data.district}</span>
-            </div>
-        </div>
-      `;
-      
-      setTimeout(() => {
-        wheel.classList.remove("spinning"); 
-        isSpinning = false; 
-      }, 3000);
+      // 1. Play Applause Audio
+      const applauseSound = document.getElementById("applause-sound");
+      if (applauseSound) {
+        applauseSound.currentTime = 0;
+        applauseSound.play().catch(e => console.log(e));
+        
+        // Stop audio exactly after 4 seconds
+        setTimeout(() => {
+            applauseSound.pause();
+            applauseSound.currentTime = 0;
+        }, 4000);
+      }
+
+      // 2. Populate and Show the Big Winner Modal
+      const winnerModal = document.getElementById("winner-modal");
+      document.getElementById("winner-img").src = data.image_url || 'https://via.placeholder.com/220';
+      document.getElementById("winner-name-display").innerText = data.name;
+      document.getElementById("winner-district-display").innerText = `📍 ${data.district}`;
+      winnerModal.style.display = "flex";
+
+      // 3. Fire Confetti continuously for 4 seconds
+      const duration = 4000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({
+          particleCount: 7,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#ff00cc', '#00ffcc', '#ffcc00', '#ffffff']
+        });
+        confetti({
+          particleCount: 7,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#ff00cc', '#00ffcc', '#ffcc00', '#ffffff']
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+
+      // Reset Wheel State behind the modal
+      winnerText.innerHTML = `🎉 Winner: <strong>${data.name}</strong>`;
+      winnerText.style.color = "#00ffcc";
+      wheel.classList.remove("spinning"); 
+      isSpinning = false; 
+
     }, 5000); 
 
   } catch (error) {
@@ -256,6 +279,11 @@ function openPopup() {
 
 function closePopup() {
   document.getElementById("popup").style.display = "none";
+}
+
+// Close the Winner Reveal Modal
+function closeWinnerModal() {
+  document.getElementById("winner-modal").style.display = "none";
 }
 
 function showLargeImage(url) {
@@ -285,7 +313,7 @@ function idleSpin() {
   requestAnimationFrame(idleSpin);
 }
 
-/* 7. LIVE VISITOR TRACKING & ANIMATION */
+/* 7. LIVE VISITOR TRACKING */
 async function startVisitorCounter() {
   const initialUrl = API + "/visit"; 
   await fetchAndAnimate(initialUrl);
