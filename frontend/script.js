@@ -90,6 +90,9 @@ function renderWheel(candidates) {
   const sliceAngle = 360 / candidates.length;
   let gradientString = 'conic-gradient(from 0deg, ';
 
+  // 🔥 NEW FIX: Pull text closer to the center circle on mobile screens
+  const textOffset = window.innerWidth <= 600 ? 35 : 65;
+
   candidates.forEach((c, i) => {
     const color = colors[i % colors.length];
     const startAngle = i * sliceAngle;
@@ -101,7 +104,9 @@ function renderWheel(candidates) {
     textEl.innerText = c.name.split(' ')[0]; 
 
     const textAngle = startAngle + (sliceAngle / 2) - 90;
-    textEl.style.transform = `translateY(-50%) rotate(${textAngle}deg) translateX(65px)`;
+    
+    // 🔥 Injecting our responsive textOffset here
+    textEl.style.transform = `translateY(-50%) rotate(${textAngle}deg) translateX(${textOffset}px)`;
 
     wheel.appendChild(textEl);
 
@@ -229,7 +234,7 @@ async function spin() {
       document.getElementById("winner-district-display").innerText = `📍 ${data.district}`;
       winnerModal.style.display = "flex";
 
-      // 3. Fire Confetti continuously for 4 seconds (🔴 FIXED Z-INDEX)
+      // 3. Fire Confetti
       const duration = 4000;
       const end = Date.now() + duration;
 
@@ -240,7 +245,7 @@ async function spin() {
           spread: 55,
           origin: { x: 0 },
           colors: ['#ff00cc', '#00ffcc', '#ffcc00', '#ffffff'],
-          zIndex: 10000 // Places confetti IN FRONT of the popup
+          zIndex: 10000 
         });
         confetti({
           particleCount: 7,
@@ -248,7 +253,7 @@ async function spin() {
           spread: 55,
           origin: { x: 1 },
           colors: ['#ff00cc', '#00ffcc', '#ffcc00', '#ffffff'],
-          zIndex: 10000 // Places confetti IN FRONT of the popup
+          zIndex: 10000 
         });
 
         if (Date.now() < end) {
@@ -256,7 +261,6 @@ async function spin() {
         }
       }());
 
-      // Reset Wheel State behind the modal
       winnerText.innerHTML = `🎉 Winner: <strong>${data.name}</strong>`;
       winnerText.style.color = "#00ffcc";
       wheel.classList.remove("spinning"); 
@@ -272,7 +276,7 @@ async function spin() {
   }
 }
 
-/* 5. UI INTERACTIVE LOGIC (Popups) */
+/* 5. UI INTERACTIVE LOGIC */
 function openPopup() {
   document.getElementById("code").value = ""; 
   document.getElementById("popup").style.display = "block";
@@ -282,7 +286,6 @@ function closePopup() {
   document.getElementById("popup").style.display = "none";
 }
 
-// Close the Winner Reveal Modal
 function closeWinnerModal() {
   document.getElementById("winner-modal").style.display = "none";
 }
@@ -354,7 +357,6 @@ async function fetchAndAnimate(fetchUrl) {
   }
 }
 
-/* INITIALIZE */
 loadTop10();
 loadTimer();
 startVisitorCounter();
