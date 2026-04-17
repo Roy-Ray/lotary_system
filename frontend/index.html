@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lucky Draw Event</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="asha-container">
+    <div class="asha-canvas" onclick="showLargeImage('https://res.cloudinary.com/dlvpmxac5/image/upload/v1776403735/MV5BNzVlYmY0MjctMTVkYy00YTdiLThkN2MtMTc2OWU3YTFkZmM3XkEyXkFqcGc._V1_FMjpg_UX1000__oca6jg.jpg')">
+      <img src="https://res.cloudinary.com/dlvpmxac5/image/upload/v1776403735/MV5BNzVlYmY0MjctMTVkYy00YTdiLThkN2MtMTc2OWU3YTFkZmM3XkEyXkFqcGc._V1_FMjpg_UX1000__oca6jg.jpg" alt="Asha Bhosle Ji">
+    </div>
+    <p class="asha-caption">Asha Ji</p>
+  </div>
+
+  <div class="live-viewer-container">
+    <div class="live-viewer-pill">
+      <span class="live-dot"></span> Visitors Count: <span id="view-count">...</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <header class="header">
+      <h1>🎉 Lucky Draw Event</h1>
+      <div class="event-info">
+        <h2>Event: <span id="event-name" class="highlight">Loading...</span></h2>
+        <h3>Organized by: <span id="organizer-name" class="highlight">Loading...</span></h3>
+      </div>
+      <div id="timer" class="timer">Loading Timer...</div>
+    </header>
+
+    <main class="main-content">
+      <section class="spinner-section glass-panel">
+        <h2 id="winner" class="winner-text">Awaiting Winner...</h2>
+        <div class="wheel-container">
+          <div class="pointer"></div>
+          <div class="wheel-rim"></div>
+          <div class="wheel" id="wheel"></div>
+          <button class="center-spin-btn" onclick="openPopup()">▶</button>
+        </div>
+      </section>
+
+      <section class="leaderboard-section glass-panel">
+        <h2>🏆 Top 10 Performers</h2>
+        <div id="top10" class="grid">
+          <p class="loading-text">Loading top performers...</p>
+        </div>
+      </section>
+
+      <section class="eligible-section glass-panel full-width">
+        <h2>🌟 Eligible for Lucky Draw (Perfect Score: 100)</h2>
+        <div id="eligible-list" class="eligible-container">
+          <p class="loading-text">Loading eligible candidates...</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="popup" class="modal">
+    <div class="modal-content glass-panel">
+      <h3>🔐 Organizer Access</h3>
+      <p>Enter your code to initiate the draw.</p>
+      <input type="password" id="code" placeholder="Enter Access Code">
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="spin()">Spin the Wheel!</button>
+        <button class="btn-secondary" onclick="closePopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="img-overlay" class="img-overlay">
+    <img id="enlarged-img" src="" alt="Enlarged Profile">
+  </div>
+
+  <div id="user-popup" class="user-popup glass-panel">
+    <h3 id="popup-name">Name</h3>
+    <p id="popup-district">District</p>
+    <div class="popup-score">⭐ <span id="popup-score-val"></span></div>
+  </div>
+  
+  <script src="script.js"></script>
+  <audio id="spin-sound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
+
+</body>
+</html>
