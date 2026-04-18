@@ -226,17 +226,19 @@ async function spin() {
             applauseSound.currentTime = 0;
         }, 4000);
       }
-
       // 2. Populate and Show the Big Winner Modal
       const winnerModal = document.getElementById("winner-modal");
       document.getElementById("winner-img").src = data.image_url || 'https://via.placeholder.com/220';
       document.getElementById("winner-name-display").innerText = data.name;
       document.getElementById("winner-district-display").innerText = `📍 ${data.district}`;
       winnerModal.style.display = "flex";
-      // 🔴 NEW: Update the Permanent "Latest Winner" Box below the wheel
+
+      // 🔴 FIXED: Dynamically inject new winners without erasing old ones
       const latestWinnerBox = document.getElementById("latest-winner-box");
-      if (latestWinnerBox) {
-          document.getElementById("latest-winner-content").innerHTML = `
+      const latestWinnerContent = document.getElementById("latest-winner-content");
+      
+      if (latestWinnerBox && latestWinnerContent) {
+          const newWinnerHTML = `
             <div class="latest-winner-card">
               <img src="${data.image_url || 'https://via.placeholder.com/60'}" alt="Winner">
               <div style="text-align: left;">
@@ -245,6 +247,9 @@ async function spin() {
               </div>
             </div>
           `;
+          
+          // 'afterbegin' pushes the newest winner to the front of the list!
+          latestWinnerContent.insertAdjacentHTML('afterbegin', newWinnerHTML);
           latestWinnerBox.style.display = "block"; // Unhide the box
       }
 
@@ -371,7 +376,36 @@ async function fetchAndAnimate(fetchUrl) {
   }
 }
 
+async function loadWinners() {
+  try {
+    const res = await fetch(API + "/winners"); // Tell your backend dev to make this API!
+    if (!res.ok) return; 
+    
+    const data = await res.json();
+
+    if (data && data.length > 0) {
+      const box = document.getElementById("latest-winner-box");
+      const content = document.getElementById("latest-winner-content");
+      
+      content.innerHTML = data.map(w => `
+        <div class="latest-winner-card">
+          <img src="${w.image_url || 'https://via.placeholder.com/60'}" alt="Winner">
+          <div style="text-align: left;">
+            <h3>${w.name}</h3>
+            <p>📍 ${w.district}</p>
+          </div>
+        </div>
+      `).join("");
+      
+      box.style.display = "block"; // Unhide the box
+    }
+  } catch (error) {
+    console.log("No previous winners loaded yet.");
+  }
+}
+
 loadTop10();
 loadTimer();
 startVisitorCounter();
+loadWinners();
 requestAnimationFrame(idleSpin);

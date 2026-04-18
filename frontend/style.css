@@ -767,6 +767,12 @@ button {
   margin-bottom: 20px;
   text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
 }
+.winners-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
 
 .latest-winner-card {
   display: inline-flex;
@@ -804,6 +810,8 @@ button {
 
 @media (max-width: 600px) {
   .latest-winner-card {
+    width: 100%;
+    justify-content: center;
     padding: 10px 20px;
     border-radius: 20px;
   }
