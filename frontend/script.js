@@ -136,7 +136,7 @@ async function loadTimer() {
     runCountdown(eventTime);
   } catch (error) {
     document.getElementById("event-name").innerText = "আশার আলো, ছকে খেলো";
-    document.getElementById("organizer-name").innerText = "Dipon Bandyapadyay & Team™";
+    document.getElementById("organizer-name").innerText = "Dipan Bandyopadhyay & Team™";
     runCountdown(new Date("2026-04-18T22:00:00").getTime());
   }
 }
