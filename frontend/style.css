@@ -754,3 +754,59 @@ button {
   .asha-caption { font-size: 1rem; }
   .live-viewer-pill { padding: 6px 15px; font-size: 0.85rem; }
 }
+/* ==================================================================== */
+/* 🔴 LATEST WINNER BOX (BOTTOM SECTION)                                */
+/* ==================================================================== */
+.latest-winner-section {
+  text-align: center;
+  animation: fadeIn 0.8s ease;
+}
+
+.latest-winner-section h2 {
+  color: #00ffcc;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+}
+
+.latest-winner-card {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(0, 255, 204, 0.1);
+  border: 1px solid rgba(0, 255, 204, 0.4);
+  padding: 15px 30px;
+  border-radius: 50px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+  gap: 20px;
+  animation: popIn 0.5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+}
+
+.latest-winner-card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid #00ffcc;
+  object-fit: cover;
+}
+
+.latest-winner-card h3 {
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.latest-winner-card p {
+  color: #ffcc00;
+  margin: 0;
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .latest-winner-card {
+    padding: 10px 20px;
+    border-radius: 20px;
+  }
+  .latest-winner-card h3 { font-size: 1.2rem; }
+  .latest-winner-card img { width: 50px; height: 50px; }
+}

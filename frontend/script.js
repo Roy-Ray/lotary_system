@@ -233,6 +233,20 @@ async function spin() {
       document.getElementById("winner-name-display").innerText = data.name;
       document.getElementById("winner-district-display").innerText = `📍 ${data.district}`;
       winnerModal.style.display = "flex";
+      // 🔴 NEW: Update the Permanent "Latest Winner" Box below the wheel
+      const latestWinnerBox = document.getElementById("latest-winner-box");
+      if (latestWinnerBox) {
+          document.getElementById("latest-winner-content").innerHTML = `
+            <div class="latest-winner-card">
+              <img src="${data.image_url || 'https://via.placeholder.com/60'}" alt="Winner">
+              <div style="text-align: left;">
+                <h3>${data.name}</h3>
+                <p>📍 ${data.district}</p>
+              </div>
+            </div>
+          `;
+          latestWinnerBox.style.display = "block"; // Unhide the box
+      }
 
       // 3. Fire Confetti
       const duration = 4000;
